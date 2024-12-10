@@ -44,13 +44,13 @@ const getRestaurant = (id) => {
 // Create a new restaurant entry
 const createRestaurant = (data) => {
     const newRestaurant = {
-        id: getNextId(),
-        ...data
-    }
+        id: getNextId(),  // Ensure the ID is generated correctly
+        ...data,
+    };
     restaurantData.push(newRestaurant);
     return newRestaurant;
-
 };
+
 
 // Delete a restaurant by id
 const deleteRestaurant = (id) => {

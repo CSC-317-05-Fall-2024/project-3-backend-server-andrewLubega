@@ -21,11 +21,17 @@ router.get('/restaurants/:id', (req, res) => {
     }
 });
 
-// Create a new restaurant entry
+// POST endpoint to create a new restaurant
 router.post('/restaurants', express.json(), (req, res) => {
-    const newRestaurant = createRestaurant(req.body); // Create a new restaurant from request body
-    res.status(201).json(newRestaurant); // Return the created restaurant
+    const newRestaurant = req.body; // Assuming the body is JSON
+    if (newRestaurant && newRestaurant.name && newRestaurant.phone && newRestaurant.address && newRestaurant.photo) {
+        const createdRestaurant = createRestaurant(newRestaurant); // Backend assigns ID
+        res.status(201).json(createdRestaurant);
+    } else {
+        res.status(400).json({ message: 'Invalid restaurant data' });
+    }
 });
+
 
 // Delete a restaurant by ID
 router.delete('/restaurants/:id', (req, res) => {

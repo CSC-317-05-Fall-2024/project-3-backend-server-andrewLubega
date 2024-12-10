@@ -1,7 +1,6 @@
 /* This file should contain definitions for deleteRestaurantCard,
     and js to attach it as a handler per card.
 */
-
 document.addEventListener('DOMContentLoaded', function () {
     const grid = document.querySelector('.restaurant-flex-grid');
 
@@ -9,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('/api/restaurants')  // This is the new endpoint for the restaurant data
         .then(response => response.json())
         .then(restaurantData => {
+            // Clear any existing content to avoid duplicates
+            grid.innerHTML = '';
+
             // Render the restaurants dynamically
             restaurantData.forEach(restaurant => {
                 const restaurantDiv = document.createElement('div');
@@ -30,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const restaurantId = button.id.split('-')[1];
                     console.log(`Deleting restaurant with ID: ${restaurantId}`);
                     
-                    fetch(`/data/restaurantData/${restaurantId}`, { method: 'DELETE' })
+                    fetch(`/api/restaurants/${restaurantId}`, { method: 'DELETE' })
                         .then(response => response.json())
                         .then(data => {
                             console.log(data.message);
