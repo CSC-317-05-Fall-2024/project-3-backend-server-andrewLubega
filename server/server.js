@@ -1,7 +1,8 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import restaurantData from "./data/restaurants.js";
+import {getRestaurants} from "./data/restaurants.js";
+import {backendRouter} from "./routes/api.js"
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,9 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Mount the API router at the /api prefix
+app.use('/api', backendRouter);
 
 //index.html route 
 app.get('/', (req, res) => {
@@ -35,7 +39,7 @@ app.get('/form', (req,res)=>{
 
 // Serve restaurant data as JSON via an API endpoint
 app.get('/api/restaurants', (req, res) => {
-    res.json(restaurantData); // Serve the restaurant data as JSON
+    res.json(getRestaurants()); // Serve the restaurant data as JSON
 });
 
 // Delete restaurant data
@@ -52,8 +56,22 @@ app.delete('/data/restaurantData/:id', (req, res) => {
 
 //restaurants route rendering ejs template with restaurantData
 app.get('/restaurants', (req, res) => {
-    res.render('restaurants', { restaurants: restaurantData });
+    const restaruants = getRestaurants();
+    res.render('restaurants', { restaurants: restaruants });
 });
+
+// Get a restaurant by ID and render the details page
+app.get('/restaurants/:id', (req, res) => {
+    const restaurantId = parseInt(req.params.id, 10); // Get the ID from the URL
+    const restaurant = getRestaurant(restaurantId); // Fetch the restaurant data by ID
+    
+    if (restaurant) {
+        res.render('restaurant-details', { restaurant: restaurant }); // Pass the restaurant data to the view
+    } else {
+        res.status(404).send('Restaurant not found'); // If no restaurant is found, send an error
+    }
+});
+
 
 // Start the server
 app.listen(PORT, () => {
